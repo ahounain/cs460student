@@ -53,11 +53,15 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 
         controls.addEventListener('change', render);
         render(); // first time
+        const fs = require('fs');
+        const txtFile = 'key.txt';
 
-        const ioToken = '';
+        // Read the file contents
+        const ioToken = fs.readFileSync(txtFile, 'utf8');
+        
 
         const tgeo = new ThreeGeo({
-            tokenMapbox: '' // <---- set your Mapbox API token here
+            tokenMapbox: ioToken, // <---- set your Mapbox API token here
         });
 
   
