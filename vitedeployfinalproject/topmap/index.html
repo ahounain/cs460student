@@ -3,15 +3,7 @@
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
     <title>simple-viewer</title>
- <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.159.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.159.0/examples/jsm/"
-    }
-  }
-
-</script>
+ 
 
 
 
@@ -31,7 +23,11 @@
     
 
   // Import three
-  import * as THREE from 'three';
+  import * as THREE from 'https://unpkg.com/three/build/three.module.js';build: {
+    rollupOptions: {
+      external: ['/deps/three/threelet.esm.js']
+    }
+  }
   
 
 
@@ -41,9 +37,9 @@
   // Import GLTFExporter
   import { GLTFExporter } from 'https://unpkg.com/three@0.159.0/examples/jsm/exporters/GLTFExporter.js';
 
-  import stats from 'https://unpkg.com/stats.js/build/stats.min.js';
+  //import stats from 'https://unpkg.com/stats.js/build/stats.min.js';
 
-  import ThreeGeo from './node_modules/three-geo/dist/three-geo.esm.js';
+  import { ThreeGeo } from 'https://unpkg.com/three-geo@1.4.5/dist/three-geo.min.js';
 
   const apiToken = import.meta.env.VITE_APP_API_TOKEN;
 

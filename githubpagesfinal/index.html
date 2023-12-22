@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <title>simple-viewer</title>
+    <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.159.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@<version>/examples/jsm/"
+    }
+  }
+</script>
+</head>
+<body>
+    <canvas id="canvas" width = '1920' height = '1080' ></canvas>
+
+    <script src="../three.min.js"></script>
+    <script src="../OrbitControls.js"></script>
+    <script src="../stats.min.js"></script>
+
+    <script src="../three-geo.min.js"></script>
+    <script type = "module" src = "../GLTFExporter.js"></script>
+
+    <script type="module">
+        
+    (async () => {
+        THREE.Object3D.DefaultUp = new THREE.Vector3(0, 0, 1);
+
+        const canvas = document.getElementById("canvas");
+       
+        window.addEventListener("resize", function() {
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+        })
+        const camera = new THREE.PerspectiveCamera(75, canvas.width/canvas.height, 0.1, 1000);
+        camera.position.set(0, 0, 1.5);
+
+        const renderer = new THREE.WebGLRenderer({ canvas });
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+        const scene = new THREE.Scene();
+        const walls = new THREE.LineSegments(
+            new THREE.EdgesGeometry(new THREE.BoxBufferGeometry(1, 1, 1)),
+            new THREE.LineBasicMaterial({color: 0xcccccc}));
+        walls.position.set(0, 0, 0);
+        scene.add(walls);
+        scene.add(new THREE.AxesHelper(1));
+
+        const stats = new Stats();
+        stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
+        document.body.appendChild(stats.dom);
+        const render = () => {
+            stats.update();
+            renderer.render(scene, camera);
+        };
+
+        controls.addEventListener('change', render);
+        render(); // first time
+
+        const ioToken = 'sk.eyJ1IjoiYWhvdW5haW4iLCJhIjoiY2xwcjd0bDVrMDdmbzJqbzBydnZ0a3l4eCJ9.LkPI09omn9o4dYfEharg9Q';
+
+        const tgeo = new ThreeGeo({
+            tokenMapbox: ioToken, // <---- set your Mapbox API token here
+        });
+
+        const origin = [64, -22];
+        const radius = 35;
+        const terrain = await tgeo.getTerrainRgb(
+            origin, // [lat, lng]
+            radius,               // radius of bounding circle (km)
+            11);               // zoom resolution
+
+        scene.add(terrain);
+
+
+
+    const {proj, unitsPerMeter } = tgeo.getProjection(origin, radius);
+    const data = {
+"type": "FeatureCollection",
+"metadata": {
+"generated": 1701839088000,
+"url": "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2023-11-01&endtime=2023-11-30&minlatitude=63&maxlatitude=66&minlongitude=-24&maxlongitude=-13",
+"title": "USGS Earthquakes",
+"status": 200,
+"api": "1.14.0",
+"count": 25
+},
+"features": [
+{
+"type": "Feature",
+"properties": {
+"mag": 4.7,
+"place": "7 km E of Garður, Iceland",
+"time": 1699678412190,
+"updated": 1701482869040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000laaw",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000laaw&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 340,
+"net": "us",
+"code": "7000laaw",
+"ids": ",us7000laaw,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 71,
+"dmin": 0.841,
+"rms": 1.3,
+"gap": 65,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.7 - 7 km E of Garður, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.5073,
+64.0831,
+10
+]
+},
+"id": "us7000laaw"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.2,
+"place": "6 km NE of Vogar, Iceland",
+"time": 1699664285822,
+"updated": 1700287194040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000lnty",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us6000lnty&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 271,
+"net": "us",
+"code": "6000lnty",
+"ids": ",us6000lnty,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 28,
+"dmin": 0.838,
+"rms": 0.52,
+"gap": 116,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.2 - 6 km NE of Vogar, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.2952,
+64.0263,
+10
+]
+},
+"id": "us6000lnty"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.6,
+"place": "5 km SE of Reykjanesbær, Iceland",
+"time": 1699659700918,
+"updated": 1700279101040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000la96",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000la96&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 326,
+"net": "us",
+"code": "7000la96",
+"ids": ",us7000la96,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 68,
+"dmin": 0.942,
+"rms": 0.39,
+"gap": 52,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.6 - 5 km SE of Reykjanesbær, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.5024,
+63.9601,
+10
+]
+},
+"id": "us7000la96"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.5,
+"place": "4 km NNE of Keflavík, Iceland",
+"time": 1699655783676,
+"updated": 1700353065040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000lnlg",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us6000lnlg&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 312,
+"net": "us",
+"code": "6000lnlg",
+"ids": ",us6000lnlg,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 38,
+"dmin": 0.882,
+"rms": 0.78,
+"gap": 111,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.5 - 4 km NNE of Keflavík, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.5216,
+64.0376,
+10
+]
+},
+"id": "us6000lnlg"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.4,
+"place": "1 km ESE of Vogar, Iceland",
+"time": 1699655091407,
+"updated": 1700352278040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000lnlf",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us6000lnlf&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 298,
+"net": "us",
+"code": "6000lnlf",
+"ids": ",us6000lnlf,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 17,
+"dmin": 0.894,
+"rms": 0.5,
+"gap": 121,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.4 - 1 km ESE of Vogar, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.3633,
+63.9786,
+10
+]
+},
+"id": "us6000lnlf"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.6,
+"place": "2 km WSW of Vogar, Iceland",
+"time": 1699653080674,
+"updated": 1700453491040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000la8n",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000la8n&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 326,
+"net": "us",
+"code": "7000la8n",
+"ids": ",us7000la8n,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 78,
+"dmin": 0.914,
+"rms": 0.55,
+"gap": 103,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.6 - 2 km WSW of Vogar, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.4278,
+63.9718,
+10
+]
+},
+"id": "us7000la8n"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.2,
+"place": "10 km SE of Vogar, Iceland",
+"time": 1699652078041,
+"updated": 1700284167040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000lnls",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us6000lnls&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 271,
+"net": "us",
+"code": "6000lnls",
+"ids": ",us6000lnls,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 19,
+"dmin": 0.912,
+"rms": 0.89,
+"gap": 166,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.2 - 10 km SE of Vogar, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.2161,
+63.9254,
+10.995
+]
+},
+"id": "us6000lnls"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.8,
+"place": "2 km WSW of Vogar, Iceland",
+"time": 1699645517137,
+"updated": 1699648532040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000la7g",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000la7g&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 354,
+"net": "us",
+"code": "7000la7g",
+"ids": ",us7000la7g,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 114,
+"dmin": 0.911,
+"rms": 0.86,
+"gap": 91,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.8 - 2 km WSW of Vogar, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.4244,
+63.9742,
+10
+]
+},
+"id": "us7000la7g"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.9,
+"place": "0 km NW of Vogar, Iceland",
+"time": 1699643524800,
+"updated": 1699986293040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000la6z",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000la6z&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 369,
+"net": "us",
+"code": "7000la6z",
+"ids": ",us7000la6z,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 139,
+"dmin": 0.895,
+"rms": 0.76,
+"gap": 62,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.9 - 0 km NW of Vogar, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.3937,
+63.9856,
+10
+]
+},
+"id": "us7000la6z"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.6,
+"place": "3 km W of Vogar, Iceland",
+"time": 1699642327895,
+"updated": 1699646830040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000la6r",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000la6r&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 326,
+"net": "us",
+"code": "7000la6r",
+"ids": ",us7000la6r,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 80,
+"dmin": 0.914,
+"rms": 0.69,
+"gap": 62,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.6 - 3 km W of Vogar, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.4566,
+63.9804,
+10
+]
+},
+"id": "us7000la6r"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.7,
+"place": "Iceland region",
+"time": 1699642004192,
+"updated": 1699646803040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000la6q",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000la6q&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 340,
+"net": "us",
+"code": "7000la6q",
+"ids": ",us7000la6q,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 64,
+"dmin": 1.019,
+"rms": 0.86,
+"gap": 92,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.7 - Iceland region"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.5185,
+63.8739,
+10
+]
+},
+"id": "us7000la6q"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 5.3,
+"place": "3 km S of Vogar, Iceland",
+"time": 1699639740702,
+"updated": 1701555412295,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000la6d",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000la6d&format=geojson",
+"felt": 4,
+"cdi": 7.6,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 435,
+"net": "us",
+"code": "7000la6d",
+"ids": ",us7000la6d,",
+"sources": ",us,",
+"types": ",dyfi,impact-text,moment-tensor,origin,phase-data,",
+"nst": 251,
+"dmin": 0.924,
+"rms": 0.69,
+"gap": 21,
+"magType": "mww",
+"type": "earthquake",
+"title": "M 5.3 - 3 km S of Vogar, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.3812,
+63.9486,
+10
+]
+},
+"id": "us7000la6d"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.5,
+"place": "2 km W of Reykjanesbær, Iceland",
+"time": 1699639567371,
+"updated": 1699644703040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000la6l",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000la6l&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 312,
+"net": "us",
+"code": "7000la6l",
+"ids": ",us7000la6l,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 64,
+"dmin": 0.936,
+"rms": 0.71,
+"gap": 104,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.5 - 2 km W of Reykjanesbær, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.6072,
+63.9985,
+10
+]
+},
+"id": "us7000la6l"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 5.2,
+"place": "7 km WNW of Grindavík, Iceland",
+"time": 1699639256693,
+"updated": 1701555518504,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000la69",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000la69&format=geojson",
+"felt": 4,
+"cdi": 4.1,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 418,
+"net": "us",
+"code": "7000la69",
+"ids": ",us7000la69,usauto7000la69,",
+"sources": ",us,usauto,",
+"types": ",dyfi,impact-text,internal-moment-tensor,moment-tensor,origin,phase-data,",
+"nst": 186,
+"dmin": 1.029,
+"rms": 0.69,
+"gap": 24,
+"magType": "mww",
+"type": "earthquake",
+"title": "M 5.2 - 7 km WNW of Grindavík, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.5737,
+63.8776,
+10
+]
+},
+"id": "us7000la69"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.9,
+"place": "5 km ENE of Garður, Iceland",
+"time": 1699637438347,
+"updated": 1699642215040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000la5q",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000la5q&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 369,
+"net": "us",
+"code": "7000la5q",
+"ids": ",us7000la5q,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 116,
+"dmin": 0.849,
+"rms": 0.95,
+"gap": 86,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.9 - 5 km ENE of Garður, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.5415,
+64.0848,
+10
+]
+},
+"id": "us7000la5q"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.8,
+"place": "2 km E of Vogar, Iceland",
+"time": 1699635389677,
+"updated": 1701706823040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000la5b",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000la5b&format=geojson",
+"felt": 0,
+"cdi": 1,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 354,
+"net": "us",
+"code": "7000la5b",
+"ids": ",us7000la5b,",
+"sources": ",us,",
+"types": ",dyfi,origin,phase-data,",
+"nst": 37,
+"dmin": 0.885,
+"rms": 0.55,
+"gap": 110,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.8 - 2 km E of Vogar, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.3372,
+63.9824,
+10
+]
+},
+"id": "us7000la5b"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.1,
+"place": "6 km E of Vogar, Iceland",
+"time": 1699620301297,
+"updated": 1700291002040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000lnki",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us6000lnki&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 259,
+"net": "us",
+"code": "6000lnki",
+"ids": ",us6000lnki,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 46,
+"dmin": 0.87,
+"rms": 0.66,
+"gap": 119,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.1 - 6 km E of Vogar, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.2488,
+63.9781,
+10
+]
+},
+"id": "us6000lnki"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.4,
+"place": "Iceland region",
+"time": 1699498622698,
+"updated": 1700958535040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000l9ri",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000l9ri&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 298,
+"net": "us",
+"code": "7000l9ri",
+"ids": ",us7000l9ri,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 30,
+"dmin": 0.902,
+"rms": 0.96,
+"gap": 116,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.4 - Iceland region"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.3556,
+63.967,
+10
+]
+},
+"id": "us7000l9ri"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.3,
+"place": null,
+"time": 1699498596143,
+"updated": 1700960427040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000l9rj",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000l9rj&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 284,
+"net": "us",
+"code": "7000l9rj",
+"ids": ",us7000l9rj,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 15,
+"dmin": 0.877,
+"rms": 0.9,
+"gap": 121,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.3 - "
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.259,
+63.9726,
+10
+]
+},
+"id": "us7000l9rj"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.3,
+"place": "11 km NNE of Vogar, Iceland",
+"time": 1699493724161,
+"updated": 1701833731040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000lncm",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us6000lncm&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 284,
+"net": "us",
+"code": "6000lncm",
+"ids": ",us6000lncm,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 14,
+"dmin": 0.792,
+"rms": 0.99,
+"gap": 119,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.3 - 11 km NNE of Vogar, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.3026,
+64.0806,
+10
+]
+},
+"id": "us6000lncm"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.5,
+"place": "11 km WSW of Álftanes, Iceland",
+"time": 1699493054842,
+"updated": 1701411728065,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000l9r3",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000l9r3&format=geojson",
+"felt": 2,
+"cdi": 3.4,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 312,
+"net": "us",
+"code": "7000l9r3",
+"ids": ",us7000l9r3,",
+"sources": ",us,",
+"types": ",dyfi,origin,phase-data,",
+"nst": 56,
+"dmin": 0.782,
+"rms": 0.84,
+"gap": 112,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.5 - 11 km WSW of Álftanes, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.2404,
+64.0761,
+10
+]
+},
+"id": "us7000l9r3"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.6,
+"place": "4 km SSE of Vogar, Iceland",
+"time": 1699490768136,
+"updated": 1701227652726,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000l9r1",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000l9r1&format=geojson",
+"felt": 7,
+"cdi": 3.8,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 328,
+"net": "us",
+"code": "7000l9r1",
+"ids": ",us7000l9r1,",
+"sources": ",us,",
+"types": ",dyfi,origin,phase-data,",
+"nst": 61,
+"dmin": 0.922,
+"rms": 0.73,
+"gap": 116,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.6 - 4 km SSE of Vogar, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.3542,
+63.945,
+5.679
+]
+},
+"id": "us7000l9r1"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.3,
+"place": "Iceland region",
+"time": 1699488795579,
+"updated": 1701229499040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000l9qw",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000l9qw&format=geojson",
+"felt": 0,
+"cdi": 1,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 284,
+"net": "us",
+"code": "7000l9qw",
+"ids": ",us7000l9qw,",
+"sources": ",us,",
+"types": ",dyfi,origin,phase-data,",
+"nst": 29,
+"dmin": 0.857,
+"rms": 0.36,
+"gap": 121,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.3 - Iceland region"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.188,
+63.9801,
+10.557
+]
+},
+"id": "us7000l9qw"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.4,
+"place": "11 km ESE of Vogar, Iceland",
+"time": 1699017247544,
+"updated": 1699689298040,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000l9mq",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000l9mq&format=geojson",
+"felt": null,
+"cdi": null,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 298,
+"net": "us",
+"code": "7000l9mq",
+"ids": ",us7000l9mq,",
+"sources": ",us,",
+"types": ",origin,phase-data,",
+"nst": 57,
+"dmin": 0.9,
+"rms": 0.31,
+"gap": 108,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.4 - 11 km ESE of Vogar, Iceland"
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.1705,
+63.9297,
+10
+]
+},
+"id": "us7000l9mq"
+},
+{
+"type": "Feature",
+"properties": {
+"mag": 4.6,
+"place": null,
+"time": 1698985544241,
+"updated": 1700794043239,
+"tz": null,
+"url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000l8i0",
+"detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=us7000l8i0&format=geojson",
+"felt": 7,
+"cdi": 3.8,
+"mmi": null,
+"alert": null,
+"status": "reviewed",
+"tsunami": 0,
+"sig": 328,
+"net": "us",
+"code": "7000l8i0",
+"ids": ",us7000l8i0,",
+"sources": ",us,",
+"types": ",dyfi,origin,phase-data,",
+"nst": 39,
+"dmin": 0.892,
+"rms": 0.89,
+"gap": 99,
+"magType": "mb",
+"type": "earthquake",
+"title": "M 4.6 - "
+},
+"geometry": {
+"type": "Point",
+"coordinates": [
+-22.2647,
+63.9573,
+10
+]
+},
+"id": "us7000l8i0"
+}
+],
+"bbox": [
+-22.6072,
+63.8739,
+5.679,
+-22.1705,
+64.0848,
+10.995
+]
+};
+    
+        data.features.forEach(feature => {
+            // grab coords
+        const coordinates = feature.geometry.coordinates;
+        // grab lat and long
+        const longitude = coordinates[0];
+        const latitude = coordinates[1];
+        // need to work out how to get the elevation (z)
+        // conver from geographic coords to WebGL coords
+        const [x, y] = proj([latitude, longitude]), z = 20;
+        // create a marker
+        const geom = new THREE.BufferGeometry();
+        const vertices = new Float32Array([x, y , z * unitsPerMeter]);
+        geom.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+
+        const dot = new THREE.Points(geom, new THREE.PointsMaterial({
+        size: 8,
+        sizeAttenuation: false,
+        color: 0x00cccc,
+}));
+
+scene.add(dot);
+        
+
+ console.log(`Longitude: ${longitude}, Latitude: ${latitude}`);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+        render();
+    })();
+    </script>
+</body>
+</html>
